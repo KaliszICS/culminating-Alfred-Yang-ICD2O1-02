@@ -50,7 +50,7 @@ public class PracticeProblem {
 		String[] playersNames = new String[numberOfPlayers];
 
 		for (int i = 0; i < numberOfPlayers; i++){
-			System.out.println("Select a player name for player " + playercount + ": ");
+			System.out.print("Select a player name for player " + (i+1) + ": ");
 			playersNames [i] = input.nextLine();
 		}
 		return playersNames;
