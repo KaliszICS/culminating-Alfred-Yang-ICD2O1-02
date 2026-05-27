@@ -15,7 +15,7 @@ public class PracticeProblem {
 		System.out.print("[1] Start Uno.\n[2] Rules.\nPlease enter one of the above: ");
 		userInput = input.nextLine();
 		if (userInput.equals("1")){
-			players();
+			game(players(), cards());
 		} 
 		else{
 			System.out.print("Invalid Input, please input an option above\nPress enter to continue: ");
@@ -24,7 +24,7 @@ public class PracticeProblem {
 		}
 	}
 
-	public static String[] Cards(){
+	public static ArrayList<String> cards(){
 		String everyCard = "";	
 		for (int i = 0; i < 10; i++){
 			everyCard += "Red," + i + " ";
@@ -33,7 +33,11 @@ public class PracticeProblem {
 			everyCard += "Green," + i + " ";
 		}
 		everyCard += "Red,$ Blue,$ Yellow,$ Green,$ Red,% Blue,% Yellow,% Green,% Red,+2 Blue,+2 Yellow,+2 Green,+2 Wild Wild Wild Wild Wild,+4 Wild,+4 Wild,+4 Wild,+4";
-		String[] cards = everyCard.split(" ");
+		String[] cardsArray = everyCard.split(" ");
+		ArrayList<String> cards = new ArrayList<String>();
+		for (int i = 0; i < 109; i++){
+			cards.add(cardsArray[i]);
+		}
 		return cards;
 	}
 
@@ -49,12 +53,16 @@ public class PracticeProblem {
 		}
 		int numberOfPlayers = Integer.parseInt(playercount);
 		String[] playersNames = new String[numberOfPlayers];
-
 		for (int i = 0; i < numberOfPlayers; i++){
 			System.out.print("Select a player name for player " + (i+1) + ": ");
 			playersNames [i] = input.nextLine();
 		}
 		return playersNames;
 	}
+	public static void game(String[] players, ArrayList<String> cards){
+		
+	}
 
 }
+
+
