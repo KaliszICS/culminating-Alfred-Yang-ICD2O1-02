@@ -10,13 +10,14 @@ import java.util.Scanner;
 public class PracticeProblem {
 	static Scanner input = new Scanner(System.in); 
 	static Random random = new Random();
+	static ArrayList<String> deck = startingDeck();
 	public static void main(String args[]) {
 		String userInput = "";
 		while (!(userInput.equals("1"))){
 		System.out.print("[1] Start Uno.\n[2] Rules.\nPlease enter one of the above: ");
 		userInput = input.nextLine();
 		if (userInput.equals("1")){
-			game(players(), cards());
+			game(players());
 		} 
 		else{
 			System.out.print("\nInvalid Input, please input an option above\n");
@@ -24,28 +25,27 @@ public class PracticeProblem {
 		}
 	}
 
-	public static ArrayList<String> cards(){
+	public static ArrayList<String> startingDeck(){
 		String everyCard = "";	
 		for (int i = 0; i < 10; i++){
-			everyCard += "Red," + i + " ";
-			everyCard += "Blue," + i + " ";
-			everyCard += "Yellow," + i + " ";
-			everyCard += "Green," + i + " ";
+			everyCard += "Red|" + i + " ";
+			everyCard += "Blue|" + i + " ";
+			everyCard += "Yellow|" + i + " ";
+			everyCard += "Green|" + i + " ";
 		}
 		for (int i = 1; i < 10; i++){
-			everyCard += "Red," + i + " ";
-			everyCard += "Blue," + i + " ";
-			everyCard += "Yellow," + i + " ";
-			everyCard += "Green," + i + " ";
+			everyCard += "Red|" + i + " ";
+			everyCard += "Blue|" + i + " ";
+			everyCard += "Yellow|" + i + " ";
+			everyCard += "Green|" + i + " ";
 		}
-		everyCard += "Red,$ Blue,$ Yellow,$ Green,$ Red,% Blue,% Yellow,% Green,% Red,+2 Blue,+2 Yellow,+2 Green,+2 Wild Wild Wild,+4 Wild,+4 ";
-		everyCard += "Red,$ Blue,$ Yellow,$ Green,$ Red,% Blue,% Yellow,% Green,% Red,+2 Blue,+2 Yellow,+2 Green,+2 Wild Wild Wild,+4 Wild,+4 ";
+		everyCard += "Red|$ Blue|$ Yellow|$ Green|$ Red|% Blue|% Yellow|% Green|% Red|+2 Blue|+2 Yellow|+2 Green|+2 Wild Wild Wild|+4 Wild|+4 ";
+		everyCard += "Red|$ Blue|$ Yellow|$ Green|$ Red|% Blue|% Yellow|% Green|% Red|+2 Blue|+2 Yellow|+2 Green|+2 Wild Wild Wild|+4 Wild|+4 ";
 		String[] cardsArray = everyCard.split(" ");
-		ArrayList<String> cards = new ArrayList<String>();
 		for (int i = 0; i < cardsArray.length; i++){
-			cards.add(cardsArray[i]);
+			deck.add(cardsArray[i]);
 		}
-		return cards;
+		return deck;
 	}
 
 	public static ArrayList<String> players(){
@@ -66,20 +66,21 @@ public class PracticeProblem {
 		return playersNames;
 	}
 
-	public static void game(ArrayList<String> players, ArrayList<String> cards){
+	public static void game(ArrayList<String> players){
 		ArrayList<ArrayList<String>> playerCards = new ArrayList<>();
 		//players starting hand
 		for (int i = 0; i < players.size(); i++){
-			playerCards.add(startSevenCards(players, cards));
+			playerCards.add(startSevenCards(players));
 		}
+		System.out.println(playerCards);
 	}
 
-	public static ArrayList<String> startSevenCards(ArrayList<String> players, ArrayList<String> cards){
+	public static ArrayList<String> startSevenCards(ArrayList<String> players){
 		ArrayList<String> startHand = new ArrayList<>();
 			for (int index = 0; index < 7; index++){
-				int randomCard = random.nextInt(cards.size());
-				startHand.add(cards.get(randomCard));
-				cards.remove(cards.get(randomCard));
+				int randomCard = random.nextInt(deck.size());
+				startHand.add(deck.get(randomCard));
+				deck.remove(deck.get(randomCard));
 			}
 		return startHand;
 	}
