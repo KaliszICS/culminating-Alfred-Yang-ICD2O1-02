@@ -9,17 +9,17 @@ import java.util.ArrayList;
 import java.util.Scanner;
 public class PracticeProblem {
 	static Scanner input = new Scanner(System.in); 
+	static Random random = new Random();
 	public static void main(String args[]) {
 		String userInput = "";
-		while (!(userInput.equals("1") || (userInput.equals("2")))){
+		while (!(userInput.equals("1"))){
 		System.out.print("[1] Start Uno.\n[2] Rules.\nPlease enter one of the above: ");
 		userInput = input.nextLine();
 		if (userInput.equals("1")){
 			game(players(), cards());
 		} 
 		else{
-			System.out.print("Invalid Input, please input an option above\nPress enter to continue: ");
-			input.nextLine();
+			System.out.print("\nInvalid Input, please input an option above\n");
 		}
 		}
 	}
@@ -32,37 +32,57 @@ public class PracticeProblem {
 			everyCard += "Yellow," + i + " ";
 			everyCard += "Green," + i + " ";
 		}
-		everyCard += "Red,$ Blue,$ Yellow,$ Green,$ Red,% Blue,% Yellow,% Green,% Red,+2 Blue,+2 Yellow,+2 Green,+2 Wild Wild Wild Wild Wild,+4 Wild,+4 Wild,+4 Wild,+4";
+		for (int i = 1; i < 10; i++){
+			everyCard += "Red," + i + " ";
+			everyCard += "Blue," + i + " ";
+			everyCard += "Yellow," + i + " ";
+			everyCard += "Green," + i + " ";
+		}
+		everyCard += "Red,$ Blue,$ Yellow,$ Green,$ Red,% Blue,% Yellow,% Green,% Red,+2 Blue,+2 Yellow,+2 Green,+2 Wild Wild Wild,+4 Wild,+4 ";
+		everyCard += "Red,$ Blue,$ Yellow,$ Green,$ Red,% Blue,% Yellow,% Green,% Red,+2 Blue,+2 Yellow,+2 Green,+2 Wild Wild Wild,+4 Wild,+4 ";
 		String[] cardsArray = everyCard.split(" ");
 		ArrayList<String> cards = new ArrayList<String>();
-		for (int i = 0; i < 109; i++){
+		for (int i = 0; i < cardsArray.length; i++){
 			cards.add(cardsArray[i]);
 		}
 		return cards;
 	}
 
-	public static String[] players(){
+	public static ArrayList<String> players(){
 		String playercount = "";
-		System.out.print("Pick a range of players from 2-4: ");
+		System.out.print("\nPick a range of players from 2-4: ");
 		playercount = input.nextLine();
 		while (!(playercount.equals("2") || playercount.equals("3") || playercount.equals("4"))){
-			System.out.print("Invalid Input, please put a number from 2-4\nPress enter to continue: ");
-			input.nextLine();
+			System.out.print("Invalid Input, please put a number from 2-4\n");
 			System.out.print("Pick a range of players from 2-4: ");
 			playercount = input.nextLine();
 		}
 		int numberOfPlayers = Integer.parseInt(playercount);
-		String[] playersNames = new String[numberOfPlayers];
+		ArrayList<String> playersNames = new ArrayList<>();
 		for (int i = 0; i < numberOfPlayers; i++){
 			System.out.print("Select a player name for player " + (i+1) + ": ");
-			playersNames [i] = input.nextLine();
+			playersNames.add(input.nextLine());
 		}
 		return playersNames;
 	}
-	public static void game(String[] players, ArrayList<String> cards){
-		
+
+	public static void game(ArrayList<String> players, ArrayList<String> cards){
+		ArrayList<ArrayList<String>> playerCards = new ArrayList<>();
+		//players starting hand
+		for (int i = 0; i < players.size(); i++){
+			playerCards.add(startSevenCards(players, cards));
+		}
 	}
 
+	public static ArrayList<String> startSevenCards(ArrayList<String> players, ArrayList<String> cards){
+		ArrayList<String> startHand = new ArrayList<>();
+			for (int index = 0; index < 7; index++){
+				int randomCard = random.nextInt(cards.size());
+				startHand.add(cards.get(randomCard));
+				cards.remove(cards.get(randomCard));
+			}
+		return startHand;
+	}
 }
 
 
