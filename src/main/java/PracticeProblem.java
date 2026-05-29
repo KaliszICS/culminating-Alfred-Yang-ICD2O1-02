@@ -80,11 +80,12 @@ public class PracticeProblem {
 		cardInPlay = deck.get(randomCard);
 		deck.remove(deck.get(randomCard));
 		randomCard = random.nextInt(deck.size());
+		
 		while (!(endGame(playerCards, players))){
 			int currentPlayer = (counter + 1) % players.size();
 			counter++;
 			System.out.print("\nCARD IN PLAY: " + cardInPlay + "\n");
-			playableCards(currentPlayer, playerCards, cardInPlay);
+			System.out.println(playableCards(currentPlayer, playerCards, cardInPlay));
 		}
 	}
 
@@ -126,8 +127,6 @@ public class PracticeProblem {
 				playerHand += currentCard + "\n";
 			}
 		}
-		System.out.println(playerHand);
-		input.nextLine();
 		return playerHand;
 	}
 
