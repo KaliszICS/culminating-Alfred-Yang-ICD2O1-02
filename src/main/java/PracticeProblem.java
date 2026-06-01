@@ -80,12 +80,45 @@ public class PracticeProblem {
 		cardInPlay = deck.get(randomCard);
 		deck.remove(deck.get(randomCard));
 		randomCard = random.nextInt(deck.size());
-		
+
+		int reverse = 1;
 		while (!(endGame(playerCards, players))){
 			int currentPlayer = (counter + 1) % players.size();
-			counter++;
+
+			if (reverse % 2 == 0){
+				counter--;
+			}
+			else {
+				counter++;
+			}
+			
 			System.out.print("\nCARD IN PLAY: " + cardInPlay + "\n");
-			System.out.println(playableCards(currentPlayer, playerCards, cardInPlay));
+			System.out.println(playableCards(currentPlayer, playerCards, cardInPlay, false));
+
+			String playedCard = playOptions(players, currentPlayer, playerCards, cardInPlay);
+
+			if (playedCard.equals("0")){
+				playerCards = drawCard(currentPlayer, playerCards);
+
+			}
+		}
+	}
+
+	public static String playOptions(ArrayList<String> players, int currentPlayer, ArrayList<ArrayList<String>> playerCards, String cardInPlay){
+		while (true){
+			String userInput = "";
+			System.out.print("Select a playable card: ");
+			userInput = input.nextLine();
+			if (userInput.equals("0")){
+				return "0";
+			}
+			for (int i = 0; i < Integer.parseInt(playableCards(currentPlayer, playerCards, cardInPlay, true)); i++){
+				if (userInput.equals(i+1+"")){
+					return playerCards.get(currentPlayer).get(i);
+				}
+			}
+			System.out.println("Invalid Input, Please input a valid option");
+			System.out.println(playableCards(currentPlayer, playerCards, cardInPlay, false));
 		}
 	}
 
@@ -100,6 +133,13 @@ public class PracticeProblem {
 		return startHand;
 	}
 
+	public static ArrayList<ArrayList<String>> drawCard(int currentPlayer, ArrayList<ArrayList<String>> playerCards){
+		int randomCard = random.nextInt(deck.size());
+		playerCards.get(currentPlayer).add(deck.get(randomCard));
+		deck.remove(deck.get(randomCard));
+		return playerCards;
+	}
+
 	public static Boolean endGame(ArrayList<ArrayList<String>> playerCards, ArrayList<String> players){
 		for (int i = 0; i < players.size(); i++){
 			if (playerCards.get(i).size() == 0){
@@ -109,7 +149,7 @@ public class PracticeProblem {
 		return false;
 	}
 
-	public static String playableCards(int currentPlayer, ArrayList<ArrayList<String>> playerCards, String cardInPlay){
+	public static String playableCards(int currentPlayer, ArrayList<ArrayList<String>> playerCards, String cardInPlay, boolean giveNumOfCards){
 		String playerHand = "[0] Draw Card\n";
 		String currentCard = "";
 		int cardNumberCounter = 1;
@@ -120,6 +160,9 @@ public class PracticeProblem {
 				playerHand += "[" + cardNumberCounter + "] " + currentCard + "\n";
 				cardNumberCounter++;
 			}
+		}
+		if (giveNumOfCards){
+			return (cardNumberCounter-1)+"";
 		}
 		for (int i = 0; i < currentHand.size(); i++){
 			currentCard = currentHand.get(i);
