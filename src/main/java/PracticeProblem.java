@@ -69,7 +69,6 @@ public class PracticeProblem {
 
 	public static void game(ArrayList<String> players){
 		int counter = -1;
-		int randomCard = random.nextInt(deck.size());
 		ArrayList<ArrayList<String>> playerCards = new ArrayList<>();
 		String cardInPlay = "";
 		ArrayList<String> discardPile = new ArrayList<>();
@@ -77,6 +76,7 @@ public class PracticeProblem {
 		for (int i = 0; i < players.size(); i++){
 			playerCards.add(startSevenCards(players));
 		}
+		int randomCard = random.nextInt(deck.size());
 		cardInPlay = deck.get(randomCard);
 		deck.remove(deck.get(randomCard));
 		randomCard = random.nextInt(deck.size());
