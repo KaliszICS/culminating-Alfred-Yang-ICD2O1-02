@@ -81,7 +81,7 @@ public class PracticeProblem {
 		deck.remove(deck.get(randomCard));
 		randomCard = random.nextInt(deck.size());
 
-		System.out.print("it's " + players.get(0) + "'s turn \nPress enter to continue: ");
+		System.out.print("\nit's " + players.get(0) + "'s turn \nPress enter to continue: ");
 		input.nextLine();
 
 		int reverse = 1;
@@ -108,28 +108,34 @@ public class PracticeProblem {
 			if (playedCard.equals("0")){
 				playerCards = drawCard(currentPlayer, playerCards);
 			}
-
+			else {
 			reverse = reverse(reverse, playedCard);
 			currentPlayer = skip(reverse, playedCard, currentPlayer);
-			wildCard(playedCard);
+			playedCard = wildCard(playedCard);
+			playerCards = drawTwoOrFour(currentPlayer, playerCards, playedCard);
 
-			discardPile.add(playedCard);
+			discardPile.add(cardInPlay);
 			cardInPlay = playedCard;
 			playerCards.get(currentPlayer).remove(playedCard);
-
+			}
 			nextTurnText(reverse, currentPlayer, players);
+		
+		}
+	}
 
-
+	public static ArrayList<ArrayList<String>> drawTwoOrFour(int currentPlayer, ArrayList<ArrayList<String>> playerCards, String playedCard){
+		if (!playedCard.substring(playedCard.indexOf("|")).equals("+2")){
+			return playerCards;
 		}
 	}
 
 	public static void nextTurnText(int reverse, int currentPlayer, ArrayList<String> players){
 		if (reverse % 2 == 0){
-			System.out.print("next turn: " + players.get(currentPlayer-1) + "\ngive the device to " + players.get(currentPlayer-1) + ".\nPress enter to continue: ");
+			System.out.print("\nnext turn: " + (players.get((currentPlayer - 1) % players.size())) + "\ngive the device to " + (players.get((currentPlayer - 1) % players.size())) + ".\nPress enter to continue: ");
 			input.nextLine();
 		}			
 		else {
-			System.out.print("next turn: " + players.get(currentPlayer+1) + "\ngive the device to " + players.get(currentPlayer+1) + ".\nPress enter to continue: ");
+			System.out.print("\nnext turn: " + (players.get((currentPlayer + 1) % players.size())) + "\ngive the device to " + (players.get((currentPlayer + 1) % players.size())) + ".\nPress enter to continue: ");
 			input.nextLine();
 		}
 	}
@@ -137,13 +143,14 @@ public class PracticeProblem {
 	public static String playOptions(ArrayList<String> players, int currentPlayer, ArrayList<ArrayList<String>> playerCards, String cardInPlay, String outputCards){
 		while (true){
 			String userInput = "";
+			int i = 0;
 			ArrayList<String> playableCards = playableCards(currentPlayer, playerCards, cardInPlay, false);
 			System.out.print("Select a playable card: ");
 			userInput = input.nextLine();
 			if (userInput.equals("0")){
 				return "0";
 			}
-			for (int i = 0; i < (playableCards.size()); i++){
+			for (i = 0; i < (playableCards.size()); i++){
 				if (userInput.equals(i+1+"")){
 					return playableCards.get(i + 1).substring(4);
 				}
@@ -188,7 +195,7 @@ public class PracticeProblem {
 		ArrayList<String> currentHand = playerCards.get(currentPlayer);
 		for (int i = 0; i < currentHand.size(); i++){
 			currentCard = currentHand.get(i);
-			if (currentCard.startsWith(inPlayCardSuit(cardInPlay)) || currentCard.substring(currentCard.indexOf("|") + 1, currentCard.length()).equals(inPlayCardValue(cardInPlay)) || currentCard.startsWith("Wild")){
+			if (currentCard.startsWith(inPlayCardSuit(cardInPlay)) || currentCard.substring(currentCard.indexOf("|") + 1).equals(inPlayCardValue(cardInPlay)) || currentCard.startsWith("Wild")){
 				playerHand.add("[" + cardNumberCounter + "] " + currentCard);
 				cardNumberCounter++;
 			}
@@ -198,7 +205,7 @@ public class PracticeProblem {
 		}
 		for (int i = 0; i < currentHand.size(); i++){
 			currentCard = currentHand.get(i);
-			if (!(currentCard.startsWith(inPlayCardSuit(cardInPlay)) || currentCard.substring(currentCard.indexOf("|") + 1, currentCard.length()).equals(inPlayCardValue(cardInPlay)) || currentCard.startsWith("Wild"))){
+			if (!(currentCard.startsWith(inPlayCardSuit(cardInPlay)) || currentCard.substring(currentCard.indexOf("|") + 1).equals(inPlayCardValue(cardInPlay)) || currentCard.startsWith("Wild"))){
 				playerHand.add(currentCard);
 			}
 		}
@@ -206,34 +213,34 @@ public class PracticeProblem {
 	}
 
 	public static String inPlayCardSuit(String cardInPlay){
-		if (cardInPlay.startsWith("Wild")){
-			return wildCard(cardInPlay);
-		}
+		//if (cardInPlay.startsWith("Wild")){
+		//	return wildCard(cardInPlay);
+		//}
 		return cardInPlay.substring(0, cardInPlay.indexOf("|"));
 	}
 
 	public static String inPlayCardValue(String cardInPlay){
-		return cardInPlay.substring(cardInPlay.indexOf("|"), cardInPlay.length());
+		return cardInPlay.substring(cardInPlay.indexOf("|") + 1, cardInPlay.length());
 	}
 
 	public static String wildCard(String card){
 		if (!card.startsWith("Wild")){
-			return null;
+			return card;
 		}
 		while (true){
-				System.out.print("Select a colour for the Wild card to be. (R, G, B, Y");
+				System.out.print("Select a colour for the Wild card to be. (R, G, B, Y): ");
 				String userInput = input.nextLine();
 				if (userInput.toLowerCase().equals("g")){
-					return "Green";
+					return "Green|Wild";
 				}
 				if (userInput.toLowerCase().equals("r")){
-					return "Red";
+					return "Red|Wild";
 				}
 				if (userInput.toLowerCase().equals("b")){
-					return "Blue";
+					return "Blue|Wild";
 				}
 				if (userInput.toLowerCase().equals("y")){
-					return "Yellow";
+					return "Yellow|Wild";
 				}
 				System.out.println("Invalid Input, Please select an actual option.");
 			}
