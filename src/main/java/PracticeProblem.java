@@ -165,7 +165,7 @@ public class PracticeProblem {
 			input.nextLine();
 		}			
 		else {
-			String nextPlayer = (players.get((currentPlayer + 1) % players.size()));
+			String nextPlayer = (players.get(Math.abs((currentPlayer + 1) % players.size())));
 			System.out.print("\nnext turn: " + nextPlayer + "\ngive the device to " + nextPlayer + ".\nPress enter to continue: ");
 			input.nextLine();
 		}
