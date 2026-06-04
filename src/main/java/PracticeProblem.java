@@ -3,6 +3,7 @@
         * Author: Alfred Yang
         * Date Created: May 27, 2026
         * Date Last Modified: June ????????????????????????????????????/, 2026
+		* ADD HOW MANY PLAYERS EACH PLAYER HAS
         */
 import java.util.Random;
 import java.util.ArrayList;
@@ -86,7 +87,7 @@ public class PracticeProblem {
 
 		int reverse = 1;
 		while (!(endGame(playerCards, players))){
-			int currentPlayer = (counter + 1) % players.size();
+			int currentPlayer = Math.abs((counter + 1) % players.size());
 
 			if (reverse % 2 == 0){
 				counter--;
@@ -107,35 +108,65 @@ public class PracticeProblem {
 
 			if (playedCard.equals("0")){
 				playerCards = drawCard(currentPlayer, playerCards);
+				ArrayList<String> currentPlayerCards = playerCards.get(currentPlayer);
+				System.out.println("You drew a " + currentPlayerCards.get(currentPlayerCards.size() - 1));
 			}
 			else {
 			reverse = reverse(reverse, playedCard);
-			currentPlayer = skip(reverse, playedCard, currentPlayer);
+			playerCards = drawTwoOrFour(currentPlayer, playerCards, playedCard, reverse, players);
 			playedCard = wildCard(playedCard);
-			playerCards = drawTwoOrFour(currentPlayer, playerCards, playedCard);
-
 			discardPile.add(cardInPlay);
 			cardInPlay = playedCard;
 			playerCards.get(currentPlayer).remove(playedCard);
+			currentPlayer = skip(reverse, playedCard, currentPlayer);
+
 			}
+			System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 			nextTurnText(reverse, currentPlayer, players);
 		
 		}
 	}
 
-	public static ArrayList<ArrayList<String>> drawTwoOrFour(int currentPlayer, ArrayList<ArrayList<String>> playerCards, String playedCard){
-		if (!playedCard.substring(playedCard.indexOf("|")).equals("+2")){
+	public static ArrayList<ArrayList<String>> drawTwoOrFour(int currentPlayer, ArrayList<ArrayList<String>> playerCards, String playedCard, int reverse, ArrayList<String> players){
+		if (!(playedCard.substring(playedCard.indexOf("|")+1).equals("+2") || playedCard.substring(playedCard.indexOf("|")+1).equals("+4"))){
 			return playerCards;
 		}
+		if (reverse % 2 == 0){
+			if (playedCard.substring(playedCard.indexOf("|") + 1).equals("+2")){
+				for (int i = 0; i < 2; i++){
+				playerCards = drawCard(Math.abs((currentPlayer - 1) % players.size()), playerCards);
+			}
+			}
+			else{
+				for (int i = 0; i < 4; i++){
+				playerCards = drawCard(Math.abs((currentPlayer - 1) % players.size()), playerCards);
+			}
+			}
+		}
+		else{
+			if (playedCard.substring(playedCard.indexOf("|") + 1).equals("+2")){
+				for (int i = 0; i < 2; i++){
+				playerCards = drawCard(Math.abs((currentPlayer + 1) % players.size()), playerCards);
+			}
+			}
+			else{
+				for (int i = 0; i < 4; i++){
+				playerCards = drawCard(Math.abs((currentPlayer + 1) % players.size()), playerCards);
+			}
+		}
 	}
+	return playerCards;
+}
 
 	public static void nextTurnText(int reverse, int currentPlayer, ArrayList<String> players){
 		if (reverse % 2 == 0){
-			System.out.print("\nnext turn: " + (players.get((currentPlayer - 1) % players.size())) + "\ngive the device to " + (players.get((currentPlayer - 1) % players.size())) + ".\nPress enter to continue: ");
+			String nextPlayer = (players.get(Math.abs((currentPlayer - 1) % players.size())));
+			System.out.print("\nnext turn: " + nextPlayer + "\ngive the device to " + nextPlayer + ".\nPress enter to continue: ");
 			input.nextLine();
 		}			
 		else {
-			System.out.print("\nnext turn: " + (players.get((currentPlayer + 1) % players.size())) + "\ngive the device to " + (players.get((currentPlayer + 1) % players.size())) + ".\nPress enter to continue: ");
+			String nextPlayer = (players.get((currentPlayer + 1) % players.size()));
+			System.out.print("\nnext turn: " + nextPlayer + "\ngive the device to " + nextPlayer + ".\nPress enter to continue: ");
 			input.nextLine();
 		}
 	}
@@ -227,20 +258,24 @@ public class PracticeProblem {
 		if (!card.startsWith("Wild")){
 			return card;
 		}
+		String plusFourText = "";
+		if (card.substring(card.indexOf("|")+1).equals("+4")){
+			plusFourText = "+4";
+		}
 		while (true){
 				System.out.print("Select a colour for the Wild card to be. (R, G, B, Y): ");
 				String userInput = input.nextLine();
 				if (userInput.toLowerCase().equals("g")){
-					return "Green|Wild";
+					return "Green|Wild" + plusFourText;
 				}
 				if (userInput.toLowerCase().equals("r")){
-					return "Red|Wild";
+					return "Red|Wild" + plusFourText;
 				}
 				if (userInput.toLowerCase().equals("b")){
-					return "Blue|Wild";
+					return "Blue|Wild" + plusFourText;
 				}
 				if (userInput.toLowerCase().equals("y")){
-					return "Yellow|Wild";
+					return "Yellow|Wild" + plusFourText;
 				}
 				System.out.println("Invalid Input, Please select an actual option.");
 			}
