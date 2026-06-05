@@ -81,7 +81,7 @@ public class PracticeProblem {
 			playerCards.add(new ArrayList<>());
 		}
 		for (int i = 0; i < playerCards.size(); i++) {
-			for (int j = 0; j < 1; j++) {
+			for (int j = 0; j < 7; j++) {
 				playerCards = drawCard(i, playerCards, discardPile);
 			}
 		}
