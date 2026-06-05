@@ -132,7 +132,6 @@ public class PracticeProblem {
 			for (int i = 0; i < players.size(); i++){
 				System.out.println(players.get(i) + ": " + playerCards.get(i).size());
 			}
-			System.out.println(endGame(playerCards, players));
 			if (endGame(playerCards, players) != -1){
 				endMenu(players, endGame(playerCards, players));
 			}
