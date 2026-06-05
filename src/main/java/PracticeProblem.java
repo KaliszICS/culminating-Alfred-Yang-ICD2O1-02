@@ -3,7 +3,7 @@
         * Author: Alfred Yang
         * Date Created: May 27, 2026
         * Date Last Modified: June ????????????????????????????????????/, 2026
-		* ADD HOW MANY PLAYERS EACH PLAYER HAS
+		* ADD +2 STACKING
         */
 import java.util.Random;
 import java.util.ArrayList;
@@ -11,18 +11,19 @@ import java.util.Scanner;
 public class PracticeProblem {
 	static Scanner input = new Scanner(System.in); 
 	static Random random = new Random();
-	static ArrayList<String> deck = startingDeck();
+	static ArrayList<String> deck;
+	static ArrayList<Integer> score = new ArrayList<>();
 	public static void main(String args[]) {
 		String userInput = "";
 		while (!(userInput.equals("1"))){
-		System.out.print("[1] Start Uno.\n[2] Rules.\nPlease enter one of the above: ");
-		userInput = input.nextLine();
-		if (userInput.equals("1")){
-			game(players());
-		} 
-		else{
-			System.out.print("\nInvalid Input, please input an option above\n");
-		}
+			System.out.print("[1] Start Uno.\n[2] Rules.\nPlease enter one of the above: ");
+			userInput = input.nextLine();
+			if (userInput.equals("1")){
+				game(players());
+			} 
+			else{
+				System.out.print("\nInvalid Input, please input an option above\n");
+			}
 		}
 	}
 
@@ -64,38 +65,41 @@ public class PracticeProblem {
 		for (int i = 0; i < numberOfPlayers; i++){
 			System.out.print("Select a player name for player " + (i+1) + ": ");
 			playersNames.add(input.nextLine());
+			score.add(0);
 		}
 		return playersNames;
 	}
 
 	public static void game(ArrayList<String> players){
-		int counter = -1;
+		deck = startingDeck();
+		int currentPlayer = 0;
 		String cardInPlay = "";
 		ArrayList<String> discardPile = new ArrayList<>();
 		ArrayList<ArrayList<String>> playerCards = new ArrayList<>();
 		//players starting hand
 		for (int i = 0; i < players.size(); i++){
-			playerCards.add(startSevenCards(players));
+			playerCards.add(new ArrayList<>());
+		}
+		for (int i = 0; i < playerCards.size(); i++) {
+			for (int j = 0; j < 1; j++) {
+				playerCards = drawCard(i, playerCards, discardPile);
+			}
 		}
 		int randomCard = random.nextInt(deck.size());
 		cardInPlay = deck.get(randomCard);
 		deck.remove(deck.get(randomCard));
 		randomCard = random.nextInt(deck.size());
 
-		System.out.print("\nit's " + players.get(0) + "'s turn \nPress enter to continue: ");
+		System.out.print("\nIt is " + players.get(0) + "'s turn \nPress enter to continue: ");
 		input.nextLine();
 
-		int reverse = 1;
-		while (!(endGame(playerCards, players))){
-			int currentPlayer = Math.abs((counter + 1) % players.size());
+		boolean reverseSkip = false;
+		if (players.size() == 2){
+			reverseSkip = true;
+		}
 
-			if (reverse % 2 == 0){
-				counter--;
-			}
-			else {
-				counter++;
-			}
-			
+		boolean reverse = false;
+		while (endGame(playerCards, players) == -1){			
 			System.out.print("\nCARD IN PLAY: " + cardInPlay + "\n");
 			ArrayList<String> allPlayerCards = playableCards(currentPlayer, playerCards, cardInPlay, true);
 			String outputCards = "";
@@ -107,59 +111,100 @@ public class PracticeProblem {
 			String playedCard = playOptions(players, currentPlayer, playerCards, cardInPlay, outputCards);
 
 			if (playedCard.equals("0")){
-				playerCards = drawCard(currentPlayer, playerCards);
+				playerCards = drawCard(currentPlayer, playerCards, discardPile);
 				ArrayList<String> currentPlayerCards = playerCards.get(currentPlayer);
 				System.out.println("You drew a " + currentPlayerCards.get(currentPlayerCards.size() - 1));
 			}
 			else {
-			reverse = reverse(reverse, playedCard);
-			playerCards = drawTwoOrFour(currentPlayer, playerCards, playedCard, reverse, players);
-			playedCard = wildCard(playedCard);
 			discardPile.add(cardInPlay);
-			cardInPlay = playedCard;
 			playerCards.get(currentPlayer).remove(playedCard);
-			currentPlayer = skip(reverse, playedCard, currentPlayer);
+			reverse = reverse(reverse, playedCard, players, reverseSkip);
+			playerCards = drawTwoOrFour(currentPlayer, playerCards, playedCard, reverse, players, 2, discardPile);
+			playedCard = wildCard(playedCard);
+
+			cardInPlay = playedCard;
+			currentPlayer = skip(reverse, playedCard, currentPlayer, reverseSkip);
 
 			}
 			System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
-			nextTurnText(reverse, currentPlayer, players);
-		
+			System.out.println("Card Amounts: ");
+
+			for (int i = 0; i < players.size(); i++){
+				System.out.println(players.get(i) + ": " + playerCards.get(i).size());
+			}
+			System.out.println(endGame(playerCards, players));
+			if (endGame(playerCards, players) != -1){
+				endMenu(players, endGame(playerCards, players));
+			}
+			else{
+				nextTurnText(reverse, currentPlayer, players);
+				if (reverse){
+					currentPlayer = Math.abs((currentPlayer - 1) % players.size());;
+				}
+				else {
+					currentPlayer = Math.abs((currentPlayer + 1) % players.size());;
+				}
+			}
 		}
 	}
 
-	public static ArrayList<ArrayList<String>> drawTwoOrFour(int currentPlayer, ArrayList<ArrayList<String>> playerCards, String playedCard, int reverse, ArrayList<String> players){
-		if (!(playedCard.substring(playedCard.indexOf("|")+1).equals("+2") || playedCard.substring(playedCard.indexOf("|")+1).equals("+4"))){
+	public static void endMenu(ArrayList<String> players, int victor){
+		score.set(victor, score.get(victor) + 1);
+		System.out.println("Congratulations " + players.get(victor) + " Won the game");
+		for (int i = 0; i < players.size(); i++){
+			System.out.println(players.get(i) + ": " + score.get(i));
+		}
+		while (true){
+			System.out.println("[0] End Game?");
+			System.out.println("[1] Play again?");
+			System.out.print("Select and option: ");
+			String playerInput = input.nextLine();
+			if (playerInput.equals("0")){
+				return;
+			}
+			if (playerInput.equals("1")){
+				 game(players);
+				 return;
+			}
+		}
+	}
+
+	public static ArrayList<ArrayList<String>> drawTwoOrFour(int currentPlayer, ArrayList<ArrayList<String>> playerCards, String playedCard, boolean reverse, ArrayList<String> players, int drawAmount, ArrayList<String> discardPile){
+		if (!(playedCard.contains("+2") || playedCard.contains("+4"))){
 			return playerCards;
 		}
-		if (reverse % 2 == 0){
-			if (playedCard.substring(playedCard.indexOf("|") + 1).equals("+2")){
-				for (int i = 0; i < 2; i++){
-				playerCards = drawCard(Math.abs((currentPlayer - 1) % players.size()), playerCards);
+		if (reverse){
+			if (playedCard.contains("+2")){
+				for (int i = 0; i < drawAmount; i++){
+				playerCards = drawCard(Math.abs((currentPlayer - 1) % players.size()), playerCards, discardPile);
 			}
 			}
 			else{
-				for (int i = 0; i < 4; i++){
-				playerCards = drawCard(Math.abs((currentPlayer - 1) % players.size()), playerCards);
+				drawAmount = drawAmount + 2;
+				for (int i = 0; i < (drawAmount); i++){
+				playerCards = drawCard(Math.abs((currentPlayer - 1) % players.size()), playerCards, discardPile);
 			}
 			}
+
 		}
 		else{
-			if (playedCard.substring(playedCard.indexOf("|") + 1).equals("+2")){
-				for (int i = 0; i < 2; i++){
-				playerCards = drawCard(Math.abs((currentPlayer + 1) % players.size()), playerCards);
+			if (playedCard.contains("+2")){
+				for (int i = 0; i < drawAmount; i++){
+				playerCards = drawCard(Math.abs((currentPlayer + 1) % players.size()), playerCards, discardPile);
 			}
 			}
 			else{
-				for (int i = 0; i < 4; i++){
-				playerCards = drawCard(Math.abs((currentPlayer + 1) % players.size()), playerCards);
+				drawAmount = drawAmount + 2;
+				for (int i = 0; i < (drawAmount); i++){
+				playerCards = drawCard(Math.abs((currentPlayer + 1) % players.size()), playerCards, discardPile);
 			}
 		}
 	}
 	return playerCards;
 }
 
-	public static void nextTurnText(int reverse, int currentPlayer, ArrayList<String> players){
-		if (reverse % 2 == 0){
+	public static void nextTurnText(boolean reverse, int currentPlayer, ArrayList<String> players){
+		if (reverse){
 			String nextPlayer = (players.get(Math.abs((currentPlayer - 1) % players.size())));
 			System.out.print("\nnext turn: " + nextPlayer + "\ngive the device to " + nextPlayer + ".\nPress enter to continue: ");
 			input.nextLine();
@@ -174,16 +219,15 @@ public class PracticeProblem {
 	public static String playOptions(ArrayList<String> players, int currentPlayer, ArrayList<ArrayList<String>> playerCards, String cardInPlay, String outputCards){
 		while (true){
 			String userInput = "";
-			int i = 0;
 			ArrayList<String> playableCards = playableCards(currentPlayer, playerCards, cardInPlay, false);
 			System.out.print("Select a playable card: ");
 			userInput = input.nextLine();
 			if (userInput.equals("0")){
 				return "0";
 			}
-			for (i = 0; i < (playableCards.size()); i++){
-				if (userInput.equals(i+1+"")){
-					return playableCards.get(i + 1).substring(4);
+			for (int i = 0; i < (playableCards.size()); i++){
+				if (userInput.equals(i+"")){
+					return playableCards.get(i).substring(4);
 				}
 			}
 			System.out.println("Invalid Input, Please input a valid option");
@@ -191,31 +235,23 @@ public class PracticeProblem {
 		}
 	}
 
-	public static ArrayList<String> startSevenCards(ArrayList<String> players){
-		ArrayList<String> startHand = new ArrayList<>();
-			for (int index = 0; index < 7; index++){
-				int randomCard = random.nextInt(deck.size());
-				startHand.add(deck.get(randomCard));
-				deck.remove(deck.get(randomCard));
-				randomCard = random.nextInt(deck.size());
-			}
-		return startHand;
-	}
-
-	public static ArrayList<ArrayList<String>> drawCard(int currentPlayer, ArrayList<ArrayList<String>> playerCards){
+	public static ArrayList<ArrayList<String>> drawCard(int currentPlayer, ArrayList<ArrayList<String>> playerCards, ArrayList<String> discardPile){
+		if (deck.size() == 0){
+			deck = discardPile;
+		}
 		int randomCard = random.nextInt(deck.size());
 		playerCards.get(currentPlayer).add(deck.get(randomCard));
 		deck.remove(deck.get(randomCard));
 		return playerCards;
 	}
 
-	public static Boolean endGame(ArrayList<ArrayList<String>> playerCards, ArrayList<String> players){
+	public static int endGame(ArrayList<ArrayList<String>> playerCards, ArrayList<String> players){
 		for (int i = 0; i < players.size(); i++){
 			if (playerCards.get(i).size() == 0){
-				return true;
+				return i;
 			}
 		}
-		return false;
+		return -1;
 	}
 
 	public static ArrayList<String> playableCards(int currentPlayer, ArrayList<ArrayList<String>> playerCards, String cardInPlay, boolean showAllCards){
@@ -259,7 +295,7 @@ public class PracticeProblem {
 			return card;
 		}
 		String plusFourText = "";
-		if (card.substring(card.indexOf("|")+1).equals("+4")){
+		if (card.contains("+4")){
 			plusFourText = "+4";
 		}
 		while (true){
@@ -280,18 +316,24 @@ public class PracticeProblem {
 				System.out.println("Invalid Input, Please select an actual option.");
 			}
 	}
-	public static int reverse(int reverse, String playedCard){
+	public static boolean reverse(boolean reverse, String playedCard, ArrayList<String> players, boolean reverseSkip){
+		if (reverseSkip){
+			return reverse;
+		}
 		if (playedCard.contains("%")){
-			return reverse + 1;
+			return !reverse;
 		}
 		return reverse;
 	}
 
-	public static int skip(int reverse, String playedCard, int currentPlayer){
+	public static int skip(boolean reverse, String playedCard, int currentPlayer, boolean reverseSkip){
+		if (reverseSkip && playedCard.contains("%")){
+			return currentPlayer + 1;
+		}
 		if (!playedCard.contains("$")){
 			return currentPlayer;
 		}
-		if (reverse % 2 == 0){
+		if (reverse){
 			return (currentPlayer - 1);
 		}
 		else {
