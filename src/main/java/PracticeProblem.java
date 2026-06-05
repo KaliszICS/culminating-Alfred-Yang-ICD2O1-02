@@ -162,9 +162,10 @@ public class PracticeProblem {
 				return;
 			}
 			if (playerInput.equals("1")){
-				 game(players);
-				 return;
+				game(players);
+				return;
 			}
+			System.out.println("Invalid Input\n");
 		}
 	}
 
