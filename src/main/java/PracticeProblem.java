@@ -3,7 +3,6 @@
         * Author: Alfred Yang
         * Date Created: May 27, 2026
         * Date Last Modified: June ????????????????????????????????????/, 2026
-		* ADD +2 STACKING
         */
 import java.util.Random;
 import java.util.ArrayList;
@@ -13,14 +12,22 @@ public class PracticeProblem {
 	static Random random = new Random();
 	static ArrayList<String> deck;
 	static ArrayList<Integer> score = new ArrayList<>();
+	static boolean wildPlusFourSkip = true;
+	static boolean plusTwoSkip = true;
+	static boolean reverseSkipOption = true;
+	static boolean lastActionCard = true;
+	static boolean firstCard;
 	public static void main(String args[]) {
 		String userInput = "";
 		while (!(userInput.equals("1"))){
-			System.out.print("[1] Start Uno.\n[2] Rules.\nPlease enter one of the above: ");
+			System.out.print("[1] Start Uno.\n[2] Settings.\nPlease enter one of the above: ");
 			userInput = input.nextLine();
-			if (userInput.equals("1")){
+			if (userInput.trim().equals("1")){
 				game(players());
 			} 
+			if (userInput.trim().equals("2")){
+				settings();
+			}
 			else{
 				System.out.print("\nInvalid Input, please input an option above\n");
 			}
@@ -81,7 +88,7 @@ public class PracticeProblem {
 			playerCards.add(new ArrayList<>());
 		}
 		for (int i = 0; i < playerCards.size(); i++) {
-			for (int j = 0; j < 7; j++) {
+			for (int j = 0; j < 1; j++) {
 				playerCards = drawCard(i, playerCards, discardPile);
 			}
 		}
@@ -94,7 +101,7 @@ public class PracticeProblem {
 		input.nextLine();
 
 		boolean reverseSkip = false;
-		if (players.size() == 2){
+		if (players.size() == 2 && reverseSkipOption){
 			reverseSkip = true;
 		}
 
@@ -126,7 +133,7 @@ public class PracticeProblem {
 			currentPlayer = skip(reverse, playedCard, currentPlayer, reverseSkip);
 
 			}
-			System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+			System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 			System.out.println("Card Amounts: ");
 
 			for (int i = 0; i < players.size(); i++){
@@ -156,14 +163,18 @@ public class PracticeProblem {
 		while (true){
 			System.out.println("[0] End Game?");
 			System.out.println("[1] Play again?");
+			System.out.println("[2] Settings.");
 			System.out.print("Select and option: ");
 			String playerInput = input.nextLine();
-			if (playerInput.equals("0")){
+			if (playerInput.trim().equals("0")){
 				return;
 			}
-			if (playerInput.equals("1")){
+			if (playerInput.trim().equals("1")){
 				game(players);
 				return;
+			}
+			if (playerInput.trim().equals("2")){
+				settings();
 			}
 			System.out.println("Invalid Input\n");
 		}
@@ -185,7 +196,6 @@ public class PracticeProblem {
 				playerCards = drawCard(Math.abs((currentPlayer - 1) % players.size()), playerCards, discardPile);
 			}
 			}
-
 		}
 		else{
 			if (playedCard.contains("+2")){
@@ -275,14 +285,16 @@ public class PracticeProblem {
 			if (!(currentCard.startsWith(inPlayCardSuit(cardInPlay)) || currentCard.substring(currentCard.indexOf("|") + 1).equals(inPlayCardValue(cardInPlay)) || currentCard.startsWith("Wild"))){
 				playerHand.add(currentCard);
 			}
+		}				
+		if (currentHand.size() == 1 && !lastActionCard && !"0123456789".contains(currentCard.substring(currentCard.indexOf("|") + 1))){
+			playerHand.clear();
+			playerHand.add("[0] Draw Card");
+			playerHand.add(currentCard);
 		}
 		return playerHand;
 	}
 
 	public static String inPlayCardSuit(String cardInPlay){
-		//if (cardInPlay.startsWith("Wild")){
-		//	return wildCard(cardInPlay);
-		//}
 		return cardInPlay.substring(0, cardInPlay.indexOf("|"));
 	}
 
@@ -330,14 +342,54 @@ public class PracticeProblem {
 		if (reverseSkip && playedCard.contains("%")){
 			return currentPlayer + 1;
 		}
+		int nextPlayer = currentPlayer;
+		if (reverse){
+			nextPlayer--;
+		}
+		else{
+			nextPlayer++;
+		}
+		if (wildPlusFourSkip && playedCard.contains("+4")){
+			return (nextPlayer);
+		}
+		if (plusTwoSkip && playedCard.contains("+2")){
+			return (nextPlayer);
+		}
 		if (!playedCard.contains("$")){
 			return currentPlayer;
 		}
-		if (reverse){
-			return (currentPlayer - 1);
-		}
 		else {
-			return (currentPlayer + 1);
+			return (nextPlayer);
+		}
+	}
+	public static void settings(){
+		while(true){
+			System.out.println("\n[0] Exit");
+			System.out.println("[1] plus 4 Wild Skips next players turn: " + wildPlusFourSkip);
+			System.out.println("[2] plus 2 Skips next players turn: " + plusTwoSkip);
+			System.out.println("[3] 2 players have the % skip the next players turn: " + reverseSkipOption);
+			System.out.println("[4] you can play an action card as your last card: " + lastActionCard);
+
+			System.out.print("Select and option: ");
+			String userInput = input.nextLine();
+			if (userInput.trim().equals("0")){
+				return;
+			}
+			else if (userInput.trim().equals("1")){
+				wildPlusFourSkip = !wildPlusFourSkip;
+			}
+			else if (userInput.trim().equals("2")){
+				plusTwoSkip = !plusTwoSkip;
+			}
+			else if (userInput.trim().equals("3")){
+				reverseSkipOption = !reverseSkipOption;
+			}
+			else if (userInput.trim().equals("4")){
+				lastActionCard = !lastActionCard;
+			}
+			else{
+				System.out.println("Invalid Input, input a value below");
+			}
 		}
 	}
 }
