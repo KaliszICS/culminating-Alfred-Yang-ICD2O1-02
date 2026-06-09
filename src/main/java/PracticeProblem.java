@@ -4,8 +4,8 @@
         * Date Created: May 27, 2026
         * Date Last Modified: June ????????????????????????????????????/, 2026
         */
-import java.util.Random;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 public class PracticeProblem {
 	static Scanner input = new Scanner(System.in); 
@@ -87,6 +87,7 @@ public class PracticeProblem {
 	public static void game(ArrayList<String> players){
 		deck = startingDeck();
 		int currentPlayer = 0;
+		int counter = 0;
 		String cardInPlay = "";
 		ArrayList<String> discardPile = new ArrayList<>();
 		ArrayList<ArrayList<String>> playerCards = new ArrayList<>();
@@ -155,23 +156,26 @@ public class PracticeProblem {
 
 			}
 			//SO THE CURRENT PLAYER CAN'T SEE THE NEXT PLAYERS CARDS OR LAST PLAYERS
-			System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+			System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nV\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 			System.out.println("Card Amounts: ");
 
 			for (int i = 0; i < players.size(); i++){
 				System.out.println(players.get(i) + ": " + playerCards.get(i).size());
+			}
+			if (reverse){
+					currentPlayer = Math.abs((counter - 1) % players.size());
+					counter--;
+					input.nextLine();
+				}
+			else {
+				currentPlayer = Math.abs((counter + 1) % players.size());
+				counter++;
 			}
 			if (endGame(playerCards, players) != -1){
 				endMenu(players, endGame(playerCards, players));
 			}
 			else{
 				nextTurnText(reverse, currentPlayer, players);
-				if (reverse){
-					currentPlayer = Math.abs((currentPlayer - 1) % players.size());;
-				}
-				else {
-					currentPlayer = Math.abs((currentPlayer + 1) % players.size());;
-				}
 			}
 		}
 	}
@@ -236,17 +240,9 @@ public class PracticeProblem {
 }
 
 	public static void nextTurnText(boolean reverse, int currentPlayer, ArrayList<String> players){
-		if (reverse){
-			String nextPlayer = (players.get(Math.abs((currentPlayer - 1) % players.size())));
-			System.out.print("\nnext turn: " + nextPlayer + "\ngive the device to " + nextPlayer + ".\nPress enter to continue: ");
-			input.nextLine();
-		}			
-		else {
-			String nextPlayer = (players.get(Math.abs((currentPlayer + 1) % players.size())));
-			System.out.print("\nnext turn: " + nextPlayer + "\ngive the device to " + nextPlayer + ".\nPress enter to continue: ");
+			System.out.print("\nnext turn: " + players.get(currentPlayer) + "\ngive the device to " + players.get(currentPlayer) + ".\nPress enter to continue: ");
 			input.nextLine();
 		}
-	}
 
 	public static String playOptions(ArrayList<String> players, int currentPlayer, ArrayList<ArrayList<String>> playerCards, String cardInPlay, String outputCards){
 		while (true){
