@@ -188,21 +188,21 @@ public class PracticeProblem {
 	public static void endMenu(ArrayList<String> players, int victor){
 		score.set(victor, score.get(victor) + 1);
 		System.out.println("Congratulations " + players.get(victor) + " Won the game");
+		boolean endingGame = true;
 		for (int i = 0; i < players.size(); i++){
 			System.out.println(players.get(i) + ": " + score.get(i));
 		}
-		while (true){
+		while (endingGame){
 			System.out.println("[0] End Game?");
 			System.out.println("[1] Play again?");
 			System.out.println("[2] Settings.");
 			System.out.print("Select and option: ");
 			String playerInput = input.nextLine();
 			if (playerInput.trim().equals("0")){
-				return;
+				endingGame = false;
 			}
 			if (playerInput.trim().equals("1")){
 				game(players);
-				return;
 			}
 			if (playerInput.trim().equals("2")){
 				settings();
