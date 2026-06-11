@@ -60,7 +60,7 @@ public class PracticeProblem {
 	}
 
 	public static ArrayList<String> players(){
-		//CREATING THE AMOUNT OF PLAYERS
+		//CREATING THE AMOUNT OF PLAYERS!
 		String playercount = "";
 		System.out.print("\nPick a range of players from 2-4: ");
 		playercount = input.nextLine();
